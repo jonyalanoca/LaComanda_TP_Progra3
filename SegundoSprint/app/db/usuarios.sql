@@ -24,73 +24,69 @@ SET time_zone = "+00:00";
 
 -- --------------------------------------------------------
 
-//creacion de tablas
-create table if not EXISTS mesas(
-    idMesa int AUTO_INCREMENT,
-    estado varchar(50)
-)
 
-create table if not EXISTS productos(
-    idProducto int AUTO_INCREMENT,
+CREATE TABLE IF NOT EXISTS mesas(
+    idMesa INT AUTO_INCREMENT,
+    PRIMARY KEY(idMesa),
+    estado VARCHAR(50)
+);
+CREATE TABLE IF NOT EXISTS productos(
+    idProducto INT AUTO_INCREMENT,
     PRIMARY KEY(idProducto),
-    nombre varchar(20),
-    precio decimal(10,2),
-    stock int,
-    seccion varchar(50),
-    tiempoPreparacion int,
-    descripcion varchar(100)
-)AUTO_INCREMENT=1000
-
-create table if not EXISTS empleados(
-    idEmpleado int AUTO_INCREMENT,
+    nombre VARCHAR(20),
+    precio DECIMAL(10, 2),
+    stock INT,
+    seccion VARCHAR(50),
+    tiempoPreparacion INT,
+    descripcion VARCHAR(100)
+) AUTO_INCREMENT = 1000;
+CREATE TABLE IF NOT EXISTS empleados(
+    idEmpleado INT AUTO_INCREMENT,
     PRIMARY KEY(idEmpleado),
-	nombre varchar(50),
-    apellido varchar(50),
-    edad int,
-    dni int,
-    email varchar(100),
-    clave varchar(50),
-    seccion varchar(50),
-    sueldo decimal(10,2),
-    fechaIngreso date,
-    fechaEgreso date
-)AUTO_INCREMENT=2000
-
-create table if not EXISTS socios(
-    idSocio int AUTO_INCREMENT,
+    nombre VARCHAR(50),
+    apellido VARCHAR(50),
+    edad INT,
+    dni INT,
+    email VARCHAR(100),
+    clave VARCHAR(150),
+    seccion VARCHAR(50),
+    sueldo DECIMAL(10, 2),
+    fechaIngreso DATE,
+    fechaEgreso DATE,
+    estado VARCHAR(50)
+) AUTO_INCREMENT = 2000;
+CREATE TABLE IF NOT EXISTS socios(
+    idSocio INT AUTO_INCREMENT,
     PRIMARY KEY(idSocio),
-	nombre varchar(50),
-    apellido varchar(50),
-    edad int,
-    dni int,
-    email varchar(100),
-    clave varchar(50),
-	recaudacion decimal(10,2)
-)AUTO_INCREMENT=2500
-
-create table if not EXISTS comandas(
-    idComanda int AUTO_INCREMENT,
+    nombre VARCHAR(50),
+    apellido VARCHAR(50),
+    edad INT,
+    dni INT,
+    email VARCHAR(100),
+    clave VARCHAR(150),
+    recaudacion DECIMAL(10, 2)
+) AUTO_INCREMENT = 2500;
+CREATE TABLE IF NOT EXISTS comandas(
+    idComanda INT AUTO_INCREMENT,
     PRIMARY KEY(idComanda),
-	id_Mesa int,
-    id_Empleado int,
-    nombreCliente varchar(50),
-    fotoMesa varchar(200),
-    fechaHora datetime,
-    observacion varchar(200),
-    FOREIGN KEY(id_Mesa) REFERENCES mesas(idMesa),
-    FOREIGN KEY(id_Empleado) REFERENCES empleados(idEmpleado)
-)AUTO_INCREMENT=10000
-
-create table if not EXISTS ordenes(
-    idOrden int AUTO_INCREMENT,
+    id_Mesa INT,
+    id_Empleado INT,
+    nombreCliente VARCHAR(50),
+    fotoMesa VARCHAR(200),
+    fechaHora DATETIME,
+    observacion VARCHAR(200)
+) AUTO_INCREMENT = 10000;
+CREATE TABLE IF NOT EXISTS ordenes(
+    idOrden INT AUTO_INCREMENT,
     PRIMARY KEY(idOrden),
-    id_Comanda int,
-    id_Producto int,
-    FOREIGN KEY(id_Comanda) REFERENCES comandas(idComanda),
-    FOREIGN KEY(id_Producto) REFERENCES productos(idProducto)
-)AUTO_INCREMENT=20000
+    id_Comanda INT,
+    id_Producto INT,
+    tiempoEstimado INT,
+    estado VARCHAR(50)
+) AUTO_INCREMENT = 20000;
 
-
-
+/*Creacion de un socio para pruebas:*/;
+/*Autentificacion- email:socioAdmin123@gmail.com clave:socioAdmin123*/;
+insert into socios(nombre, apellido, edad, dni,email, clave, recaudacion)values('Jonathan','Alanoca',30,38375511,'socioAdmin123@gmail.com','$2y$10$PQU90Q9Vl7v5Cj9B1CglzuGl8w9gEJG3K3yPQCsDw/U6eb4IjldAW',0);
 
 
