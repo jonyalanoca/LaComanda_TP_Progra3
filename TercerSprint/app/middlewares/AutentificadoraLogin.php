@@ -9,7 +9,7 @@
 
         public function VerificarLogeo(Request $request, RequestHandler $handler):ResponseMW{
             $header = $request->getHeaderLine('Authorization');
-            if(!empty($header)){
+            if(!empty($header) && $header!="Bearer null"){
                 return $handler->handle($request);
             }
             $response = new ResponseMW();

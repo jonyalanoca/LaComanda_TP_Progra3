@@ -1,7 +1,7 @@
 <?php
     class Csv{
         public static function GuardarCsv($nombreArchivo,$objetos){
-            $objAccesoDatos = AccesoDatos::obtenerInstancia(); 
+            // $objAccesoDatos = AccesoDatos::obtenerInstancia(); 
 
             $nombreCarpeta="./downloads/csv";
             if(!file_exists($nombreCarpeta)){
@@ -18,7 +18,7 @@
             fclose($archivo);
         }
         public static function LeerCsv($nombreArchivo){
-            $objAccesoDatos = AccesoDatos::obtenerInstancia();
+            // $objAccesoDatos = AccesoDatos::obtenerInstancia();
 
             $nombreCarpeta="./downloads/csv";
             $pathCompleto=$nombreCarpeta."/".$nombreArchivo;

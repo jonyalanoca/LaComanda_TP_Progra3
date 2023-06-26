@@ -83,10 +83,10 @@
     ->add(\AutentificadoraLogin::class . ':VerificarLogeo');
     
   $app->group('/comandas', function (RouteCollectorProxy $group) {
-    $group->post('/', \ComandaController::class . ':CargarUno')->add(\Verificadora::class . ':VerificarParamComanda');
+    $group->post('/', \ComandaController::class . ':CargarUno')->add(\AutentificadoraLogin::class . ':VerificarSocioOMozo')->add(\Verificadora::class . ':VerificarParamComanda');
     $group->get('/{id}', \ComandaController::class . ':TraerUno');
     $group->get('[/]', \ComandaController::class . ':TraerTodos');
-    $group->put('/{id}', \ComandaController::class . ':ModificarUno')->add(\Verificadora::class . ':VerificarParamComanda');
+    $group->put('/{id}', \ComandaController::class . ':ModificarUno')->add(\AutentificadoraLogin::class . ':VerificarSocioOMozo')->add(\Verificadora::class . ':VerificarParamComanda');
     $group->delete('/{id}', \ComandaController::class . ':BorrarUno');
   })->add(\AutentificadoraLogin::class . ':VerificarLogeo');
 
@@ -113,12 +113,12 @@
 })->add(\AutentificadoraLogin::class . ':VerificarLogeo');
 
 
-  $app->post('/login',\LoginController::class . ':Logearse');
+  $app->post('/login',\LoginController::class . ':Logearse')->add(\Verificadora::class . ':VerificarParamLogin');
 
-    $app->get('[/]', function (Request $request, Response $response) {    
-      $payload = json_encode(array("mensaje" => "HERO PAGE - LA COMANDA"));   
-      $response->getBody()->write($payload);
-      return $response->withHeader('Content-Type', 'application/json');
+  $app->get('[/]', function (Request $request, Response $response) {    
+    $payload = json_encode(array("mensaje" => "HERO PAGE - LA COMANDA"));   
+    $response->getBody()->write($payload);
+    return $response->withHeader('Content-Type', 'application/json');
   });
 
 $app->run();
