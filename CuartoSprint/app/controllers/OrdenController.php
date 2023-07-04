@@ -87,17 +87,25 @@
             $seccion= $segments[4];
 
             $parametros = $request->getParsedBody();
-            $tiepoEstimado=$parametros['tiempoEstimado'];
+            $tiempoEstimado=$parametros['tiempoEstimado'];
             
             $orden=Orden::obtenerUno($id);
-            $producto=Producto::obtenerUno($orden->id_Producto);
-            if($producto->seccion==$seccion){
-                Orden::modificarOrdenEstado($id,"en preparacion");
-                Orden::modificarOrdenTiempo($id,$tiempoEstimado);
-                $payload = json_encode(array("mensaje" => "Orden puesto en preparacion con exito"));
-            }else{
-                $payload = json_encode(array("mensaje" => "Esta orden pertenece a la seccion ".$producto->seccion.". No se aplicaron cambios"));
+            if($orden==false){
+                $payload = json_encode(array("mensaje" => "La orden ingresada no existe"));
+            }elseif($orden->estado!="pendiente"){
+                $payload = json_encode(array("mensaje" => "La orden ingresada debe estar en pendiente."));
             }
+            else{
+                $producto=Producto::obtenerUno($orden->id_Producto);
+                if($producto->seccion==$seccion){
+                    Orden::modificarOrdenEstado($id,"en preparacion");
+                    Orden::modificarOrdenTiempo($id,$tiempoEstimado);
+                    $payload = json_encode(array("mensaje" => "Orden puesto en preparacion con exito"));
+                }else{
+                    $payload = json_encode(array("mensaje" => "Esta orden pertenece a la seccion ".$producto->seccion.". No se aplicaron cambios"));
+                }
+            }
+            
             
             $response->getBody()->write($payload);
             return $response->withHeader('Content-Type', 'application/json');
@@ -110,22 +118,37 @@
             $seccion= $segments[4];
 
             $orden=Orden::obtenerUno($id);
-            $producto=Producto::obtenerUno($orden->id_Producto);
-            if($producto->seccion==$seccion){
-                Orden::modificarOrdenEstado($id,"listo para servir");
-                $payload = json_encode(array("mensaje" => "Orden terminada con exito"));
+            if($orden==false){
+                $payload = json_encode(array("mensaje" => "La orden ingresada no exise"));
+            }elseif($orden->estado!="en preparacion"){
+                $payload = json_encode(array("mensaje" => "La orden ingresada debe estar en preparacion"));
             }else{
-                $payload = json_encode(array("mensaje" => "Esta orden pertenece a la seccion ".$producto->seccion.". No se aplicaron cambios"));
+                $producto=Producto::obtenerUno($orden->id_Producto);
+                if($producto->seccion==$seccion){
+                    Orden::modificarOrdenEstado($id,"listo para servir");
+                    $payload = json_encode(array("mensaje" => "Orden terminada con exito"));
+                }else{
+                    $payload = json_encode(array("mensaje" => "Esta orden pertenece a la seccion ".$producto->seccion.". No se aplicaron cambios"));
+                }
             }
+            
             $response->getBody()->write($payload);
             return $response->withHeader('Content-Type', 'application/json');
         }
         public function ServirOrden($request, $response, $args){
             $id = $args['id'];
-            Orden::modificarOrdenEstado($id,"servido");
+            
             $orden=Orden::obtenerUno($id);
-            $Comanda=Camanda::obtenerUno($orden->id_Comanda);
-            Mesa::cambiarEstado($comanda->id_Mesa,"comiendo");
+            if($orden==false){
+                $payload = json_encode(array("mensaje" => "La orden ingresada no exise"));
+            }elseif($orden->estado!="en preparacion"){
+                $payload = json_encode(array("mensaje" => "La orden ingresada debe estar en listo para servir"));
+            }else{
+                Orden::modificarOrdenEstado($id,"servido");
+                $Comanda=Camanda::obtenerUno($orden->id_Comanda);
+                Mesa::cambiarEstado($comanda->id_Mesa,"comiendo");
+            }
+            
             $payload = json_encode(array("mensaje" => "Orden servida con exito"));
             $response->getBody()->write($payload);
             return $response->withHeader('Content-Type', 'application/json');

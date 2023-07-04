@@ -191,5 +191,28 @@
          $response=$response->withStatus(404);
          return $response->withHeader('Content-Type', 'application/json');
       }
+      public function VerificarParamEncuesta(Request $request, RequestHandler $handler):ResponseMW{
+         if($request->getMethod()=="POST"){
+            $parameters = $request->getParsedBody();
+            if(
+               isset($parameters["id_Comanda"]) && preg_match($this->patronNumeros,$parameters["id_Comanda"])&&
+               isset($parameters["id_Mesa"]) && preg_match($this->patronNumeros,$parameters["id_Mesa"])&&
+               isset($parameters["puntajeServicio"]) && preg_match($this->patronNumeros,$parameters["puntajeServicio"])&&
+               isset($parameters["comentario"])
+            ){
+               return $handler->handle($request);
+            }
+            $response = new ResponseMW();
+            $payload=json_encode(array("mensaje"=>"Faltan parametros o no cumplen el formato correcto"));
+            
+         }else{
+            $response = new ResponseMW();
+            $payload=json_encode(array("mensaje"=>"EL verbo de la solicitud no es POST"));
+         }
+         $response->getBody()->write($payload);
+         $response=$response->withStatus(404);
+         return $response->withHeader('Content-Type', 'application/json');
+      }
+      
    }
 ?>

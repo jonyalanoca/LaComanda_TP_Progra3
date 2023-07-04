@@ -46,7 +46,7 @@
         }
         public static function modificarOrdenTiempo($id, $tiempoEstimado){
             $objAccesoDato = AccesoDatos::obtenerInstancia();
-            $consulta = $objAccesoDato->prepararConsulta("UPDATE ordenes SET  tiepoEstimado=:tiempoEstimado WHERE idOrden = :id");
+            $consulta = $objAccesoDato->prepararConsulta("UPDATE ordenes SET  tiempoEstimado=:tiempoEstimado WHERE idOrden = :id");
             $consulta->bindValue(":id",$id,PDO::PARAM_INT);
             $consulta->bindValue(':tiempoEstimado', $tiempoEstimado, PDO::PARAM_STR);
             $consulta->execute();

@@ -78,6 +78,13 @@
             $consulta->bindValue(':estado', $estado, PDO::PARAM_STR);
             $consulta->execute();
         }
+        public static function modificarPrecioTotal($id, $precio){
+            $objAccesoDato = AccesoDatos::obtenerInstancia();
+            $consulta = $objAccesoDato->prepararConsulta("UPDATE comandas SET  precioTotal=:precio WHERE idComanda = :id");
+            $consulta->bindValue(":id",$id,PDO::PARAM_INT);
+            $consulta->bindValue(':precio', $precio, PDO::PARAM_STR);
+            $consulta->execute();
+        }
     }
     
 

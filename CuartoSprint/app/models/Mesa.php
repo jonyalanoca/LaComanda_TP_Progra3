@@ -48,6 +48,15 @@
             $consulta->bindValue(':estado', $estado, PDO::PARAM_STR);
             $consulta->execute();
         }
+        public static function obtenerLaMasUsada(){
+            $objAccesoDatos = AccesoDatos::obtenerInstancia();
+            $consulta = $objAccesoDatos->prepararConsulta("SELECT id_Mesa, COUNT(*) AS cantidad FROM comandas
+            GROUP BY id_Mesa
+            ORDER BY cantidad DESC
+            LIMIT 1");
+            $consulta->execute();
+            return $consulta->fetchAll(PDO::FETCH_ASSOC);
+        }
     }
     
 

@@ -51,6 +51,7 @@
     $group->post('/', \MesaController::class . ':CargarUno')->add(\Verificadora::class . ':VerificarParamMesa');
     $group->get('/{id}', \MesaController::class . ':TraerUno');
     $group->get('[/]', \MesaController::class . ':TraerTodos');
+    $group->get('/informe/', \MesaController::class . ':InformarLaMasUsada');
     $group->put('/{id}', \MesaController::class . ':ModificarUno')->add(\Verificadora::class . ':VerificarParamMesa');
     $group->delete('/{id}', \MesaController::class . ':BorrarUno');
   })->add(\AutentificadoraLogin::class . ':VerificarSocioOMozo')
@@ -123,11 +124,14 @@
 })->add(\AutentificadoraLogin::class . ':VerificarLogeo');
 
 $app->group('/encuestas', function (RouteCollectorProxy $group) {
-  $group->post('/', \EncuestaController::class . ':CargarUno')->add(\AutentificadoraLogin::class . ':VerificarSocio');
-  $group->get('[/]', \EncuestaController::class . ':MejorEncuesta');
+  $group->post('/', \EncuestaController::class . ':CargarUno')
+    ->add(\AutentificadoraLogin::class . ':VerificarSocio')
+    ->add(\Verificadora::class . ':VerificarParamEncuesta');
+  $group->get('[/]', \EncuestaController::class . ':MejorEncuesta')->add(\AutentificadoraLogin::class . ':VerificarSocio');
 })->add(\AutentificadoraLogin::class . ':VerificarLogeo');
 
   $app->post('/login',\LoginController::class . ':Logearse')->add(\Verificadora::class . ':VerificarParamLogin');
+
   $app->post('/pdf',\PdfController::class . ':Descargar')->add(\AutentificadoraLogin::class . ':VerificarSocio')->add(\AutentificadoraLogin::class . ':VerificarLogeo');
 
   $app->get('[/]', function (Request $request, Response $response) {   

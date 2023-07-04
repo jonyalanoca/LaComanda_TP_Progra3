@@ -66,5 +66,14 @@
             return $response
             ->withHeader('Content-Type', 'application/json');
         }
+        public function InformarLaMasUsada($request, $response, $args)
+        {
+            $lista=Mesa::obtenerLaMasUsada();
+            $payload = json_encode(array("La mesa mas usada" => $lista));
+
+            $response->getBody()->write($payload);
+            return $response
+            ->withHeader('Content-Type', 'application/json');
+        }
     }
 ?>

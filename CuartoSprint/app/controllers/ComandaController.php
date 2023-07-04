@@ -18,26 +18,30 @@
             $fechaHora=$parametros['fechaHora'];
             $observacion=$parametros['observacion'];
 
-
-            $nombreMesa=$nombreCliente.".jpg";
-            $fotoBinaria=base64_decode($parametros["fotoMesa"]);
-            $ruta=Imagen::Guardar($nombreMesa, $fotoBinaria);
-            if(file_exists($ruta)){
-                $nuevo = new Comanda();
-                $nuevo->id_Mesa=$id_Mesa;
-                $nuevo->id_Empleado=$id_Empleado;
-                $nuevo->nombreCliente=$nombreCliente;
-                $nuevo->fotoMesa=$ruta;
-                $nuevo->fechaHora=$fechaHora;
-                $nuevo->observacion=$observacion;
-                $nuevo->precioTotal=0;
-                $nuevo->estado="pendente de pago";
-                $nuevo->crearComanda();
-                Mesa::cambiarEstado($id_Mesa,"esperando pedido");
-                $payload = json_encode(array("mensaje" => "Comanda creada con exito"));
+            $mesa=Mesa::obtenerUno($id_Mesa);
+            if($mesa->estado!="disponible"){
+                $payload = json_encode(array("mensaje" => "La mesa ingresa no esta disponible"));
             }else{
-                $payload = json_encode(array("mensaje" => "La imagen no se pudo guardar. No se aplicaron cambios."));
-            }
+                $nombreMesa=$nombreCliente.".jpg";
+                $fotoBinaria=base64_decode($parametros["fotoMesa"]);
+                $ruta=Imagen::Guardar($nombreMesa, $fotoBinaria);
+                if(file_exists($ruta)){
+                    $nuevo = new Comanda();
+                    $nuevo->id_Mesa=$id_Mesa;
+                    $nuevo->id_Empleado=$id_Empleado;
+                    $nuevo->nombreCliente=$nombreCliente;
+                    $nuevo->fotoMesa=$ruta;
+                    $nuevo->fechaHora=$fechaHora;
+                    $nuevo->observacion=$observacion;
+                    $nuevo->precioTotal=0;
+                    $nuevo->estado="pendiente de pago";
+                    $nuevo->crearComanda();
+                    Mesa::cambiarEstado($id_Mesa,"esperando pedido");
+                    $payload = json_encode(array("mensaje" => "Comanda creada con exito"));
+                }else{
+                    $payload = json_encode(array("mensaje" => "La imagen no se pudo guardar. No se aplicaron cambios."));
+                }
+            }            
             $response->getBody()->write($payload);
             return $response->withHeader('Content-Type', 'application/json');
         }
@@ -113,13 +117,17 @@
             $precioTotal=Comanda::ObtenerPrecioTotal($id);
             $comanda=Comanda::obtenerUno($id);
             if($comanda->estado=="pendiente de pago"){
-                Socio::Cobrar($parametros["idSocio"],$precioTotal);
+                if($precioTotal!=null || $precioTotal!=false){
+                    Socio::Cobrar($parametros["idSocio"],$precioTotal);
+                    Comanda::modificarPrecioTotal($id, $precioTotal);
+                }
                 Mesa::cambiarEstado($comanda->id_Mesa,"pagando");
                 Orden::cambiarEstadosPagado($id);
                 Comanda::modificarEstado($id, "pagado");
+                
                 $payload = json_encode(array("mensaje" => "Se cobro la comanda con exito"));
             }else{
-                $payload = json_encode(array("mensaje" => "La comanda ya fue cobrada previamente"));
+                $payload = json_encode(array("mensaje" => "La comanda debe estar en pendiente de pago"));
             }
             $response->getBody()->write($payload);
             return $response->withHeader('Content-Type', 'application/json');

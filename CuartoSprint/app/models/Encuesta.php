@@ -20,7 +20,7 @@ class Encuesta
     
         return $objAccesoDatos->obtenerUltimoId();
     }
-    public function obtenerLaMejor()
+    public static function obtenerLaMejor()
     {
         $objAccesoDatos = AccesoDatos::obtenerInstancia();
         $consulta = $objAccesoDatos->prepararConsulta("SELECT comentario from encuestas ORDER BY puntajeServicio DESC LIMIT 1");
