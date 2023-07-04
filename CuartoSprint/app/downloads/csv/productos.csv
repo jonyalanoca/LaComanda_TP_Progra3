@@ -1,0 +1,6 @@
+idProducto,nombre,precio,stock,seccion,tiempoPreparacion,descripcion
+1002,Quilmes,1000.00,20,cerveceria,0,"bebida nacional"
+1003,Milaneza,3000.00,20,cocina,15,"Milaneza nampolitana"
+1004,Emperador,3000.00,5,vinoteca,1,"Vino blanco "
+1005,"Lemon pie",3000.00,5,candybar,10,"Postre lemon pie "
+1009,Brama,4000.00,5,cerveceria,0,"Bebida alcoholica "
